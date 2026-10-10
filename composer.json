@@ -3,7 +3,7 @@
     "description": "wisegen project backend",
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "App/"
         }
     },
     "authors": [
