@@ -28,7 +28,7 @@ class AuthController{
         }
 
         $email = $_GET['email'] ?? null;
-        $password = "Bank$101";
+        $password = "Comp$101";
         $lastname = $_GET['lastname'] ?? null;
         $firstname = $_GET['firstname'] ?? null;
         $userId = uniqid('user_');
@@ -48,7 +48,7 @@ class AuthController{
             return;
         }
 
-                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         $insert = $this->pdo->prepare("INSERT INTO users (user_id, role, permission, firstname, lastname, email, password) VALUES (:user_id, :role, :permission, :firstname, :lastname, :email, :password)");
         $result = $insert->execute([
