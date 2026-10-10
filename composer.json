@@ -1,0 +1,17 @@
+{
+    "name": "user/wisegen",
+    "description": "wisegen project backend",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Osemen Silas"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.7"
+    }
+}
