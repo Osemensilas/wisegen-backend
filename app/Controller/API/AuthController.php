@@ -28,7 +28,7 @@ class AuthController{
         }
 
         $email = $_GET['email'] ?? null;
-        $password = "Comp$101";
+        $password = $_GET['password'];
         $lastname = $_GET['lastname'] ?? null;
         $firstname = $_GET['firstname'] ?? null;
         $userId = uniqid('user_');

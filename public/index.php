@@ -1,11 +1,51 @@
+
 <?php
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
+// ------------------------------------------------------------
+// CORS CONFIGURATION
+// ------------------------------------------------------------
+
+$allowedOrigins = [
+    'http://localhost:3000',
+    'https://wisegen.ca',
+    'https://www.wisegen.ca',
+    'https://dashboard.wisegen.ca',
+    'https://www.dashboard.wisegen.ca',
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+    header('Access-Control-Max-Age: 86400');
+    header('Vary: Origin');
+}
+
+// Handle preflight before starting the session or loading the app.
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    if (!in_array($origin, $allowedOrigins, true)) {
+        http_response_code(403);
+        exit('Origin not allowed');
+    }
+
+    http_response_code(204);
+    exit;
+}
+
+// ------------------------------------------------------------
+// SESSION
+// ------------------------------------------------------------
+
 session_start();
 
-// Create guest session if user not logged in
+// Create guest session if user not logged in.
 if (!isset($_SESSION['user'])) {
     $_SESSION['guest'] = [
         'id' => session_id(),
@@ -16,64 +56,23 @@ if (!isset($_SESSION['user'])) {
 }
 
 // ------------------------------------------------------------
-// 🔐 CORS CONFIGURATION
+// BOOTSTRAP APPLICATION
 // ------------------------------------------------------------
+
 header('Content-Type: application/json');
 
-$allowedOrigins = [
-    'http://localhost:3000',
-    'https://wisegen.ca',
-    'https://www.wisegen.ca',
-    'https://www.dashboard.wisgen.ca',
-    'https://dashboard.wisgen.ca',
-];
-
-// Get the Origin header
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-// Check if origin is in allowed list
-if (in_array($origin, $allowedOrigins, true)) {
-    header("Access-Control-Allow-Origin: $origin");
-    header("Access-Control-Allow-Credentials: true");
-    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-    
-    // Add additional headers for better browser support
-    header("Access-Control-Max-Age: 86400"); // 24 hours cache for preflight
-    header("Vary: Origin"); // Important for caching responses with different origins
-}
-
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204); // No content needed for OPTIONS
-    exit();
-}
-
-// Log debugging information
-error_log("Request Origin: " . ($origin ?: 'NO ORIGIN'));
-error_log("Request Method: " . ($_SERVER['REQUEST_METHOD'] ?? 'NO METHOD'));
-error_log("Request URI: " . ($_SERVER['REQUEST_URI'] ?? 'NO URI'));
-
-// ------------------------------------------------------------
-// 🧩 BOOTSTRAP APPLICATION
-// ------------------------------------------------------------
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Load environment variables
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->safeLoad();
 
-// Initialize Router
-use App\Core\Router;
-$router = new Router();
+$router = new App\Core\Router();
 
-// Load route definitions
+// Load route definitions.
 require_once __DIR__ . '/../routes/web.php';
 
-// Resolve and handle request
+// Resolve and handle request.
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Handle the route
 $router->resolve($requestUri, $method);
