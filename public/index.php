@@ -22,16 +22,10 @@ header('Content-Type: application/json');
 
 $allowedOrigins = [
     'http://localhost:3000',
-    'https://iruhost.com',
-    'https://www.iruhost.com',
-    'https://iruap-studio.vercel.app',
-    'https://iruhost-dashboard.vercel.app',
-    'https://www.dashboard.iruhost.com',
-    'https://dashboard.iruhost.com',
-    'https://iruhost-frontend-bm2c.vercel.app',
-    'https://admin.iruhost.com',
-    'https://support.iruhost.com',
-    'https://osemen.iruhost.com'
+    'https://wisegen.ca',
+    'https://www.wisegen.ca',
+    'https://www.dashboard.wisgen.ca',
+    'https://dashboard.wisgen.ca',
 ];
 
 // Get the Origin header
